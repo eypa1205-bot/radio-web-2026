@@ -1,0 +1,443 @@
+```html
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGUA VIVA RADIO 102.7 FM - Tu emisora en vivo</title>
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef8ff',
+                            100: '#d8efff',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#03588c',
+                            900: '#0c2d48',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-effect {
+            box-shadow: 0 0 35px rgba(2, 132, 199, 0.35);
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.9; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 4s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-full bg-gradient-to-br from-slate-950 via-slate-900 to-brand-900 text-slate-100 flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-cyan-600/20 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/2 -right-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
+    </div>
+
+    <header class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                <i class="fa-solid fa-water text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-xl tracking-wider text-white">AGUA VIVA <span class="text-cyan-400 font-light">102.7 FM</span></h1>
+                <p class="text-xs text-cyan-200/70 tracking-widest uppercase">La señal que refresca tu espíritu</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3 bg-slate-900/60 border border-slate-700/60 px-4 py-2 rounded-full shadow-md">
+            <span class="flex h-3 w-3 relative">
+              <span id="liveIndicatorPing" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span id="liveIndicatorDot" class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+            </span>
+            <span id="liveStatusText" class="text-xs font-semibold tracking-wider text-slate-300 uppercase">En Vivo / Off-Air</span>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6 py-4">
+        <div class="w-full max-w-xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl glow-effect relative overflow-hidden">
+            
+            <!-- Water wave decorative graphic on top right corner -->
+            <div class="absolute -right-12 -top-12 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            <!-- STATION LOGO & CUSTOM UPLOADER SECTION -->
+            <div class="flex flex-col items-center text-center mb-8">
+                <div class="relative group mb-4">
+                    <!-- Logo Frame -->
+                    <div id="logoContainer" class="w-36 h-36 sm:w-44 sm:h-44 rounded-2xl bg-gradient-to-b from-slate-800 to-slate-900 border-2 border-cyan-500/40 flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-300 group-hover:border-cyan-400">
+                        <img id="stationLogo" src="https://placehold.co/300x300/0c2d48/38bdf8?text=AGUA+VIVA+102.7" alt="Logo Agua Viva Radio" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/300x300/0c2d48/38bdf8?text=AGUA+VIVA'">
+                    </div>
+                    
+                    <!-- Hover overlay for uploading logo -->
+                    <label for="logoInput" class="absolute inset-0 bg-slate-950/80 rounded-2xl flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer text-cyan-300">
+                        <i class="fa-solid fa-camera text-2xl mb-1"></i>
+                        <span class="text-xs font-medium px-2 text-center">Cambiar Logo</span>
+                    </label>
+                    <input type="file" id="logoInput" accept="image/*" class="hidden">
+                </div>
+
+                <!-- Frequency Badge -->
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold mb-2">
+                    <i class="fa-solid fa-tower-broadcast"></i> 102.7 FM Stereo
+                </div>
+                
+                <h2 id="currentShowTitle" class="text-xl sm:text-2xl font-bold text-white tracking-wide">Transmisión en Directo</h2>
+                <p id="currentArtistTitle" class="text-sm text-slate-400 mt-1">Conectados con la mejor programación</p>
+            </div>
+
+            <!-- AUDIO VISUALIZER / EQUALIZER SIMULATOR -->
+            <div class="mb-8 bg-slate-900/60 rounded-2xl p-4 border border-slate-800/80">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-medium text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-wave-square text-cyan-400"></i> Espectro en Vivo
+                    </span>
+                    <span id="audioStatusMsg" class="text-xs text-cyan-400/80 font-mono">Listo para reproducir</span>
+                </div>
+                <!-- Visualizer bars -->
+                <div id="visualizer" class="h-14 flex items-end justify-center gap-1 sm:gap-1.5 px-2">
+                    <!-- Dynamic bars will be inserted via JS -->
+                </div>
+            </div>
+
+            <!-- CONTROLS & VOLUME SECTION -->
+            <div class="space-y-6">
+                <!-- Main playback buttons -->
+                <div class="flex items-center justify-center gap-6">
+                    <button id="streamToggleBtn" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 flex items-center justify-center text-white shadow-lg shadow-cyan-500/40 transform active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-cyan-500/30">
+                        <i id="playIcon" class="fa-solid fa-play text-2xl sm:text-3xl ml-1"></i>
+                    </button>
+                </div>
+
+                <!-- Stream URL selector & volume slider -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-800/80">
+                    <!-- Stream source selector -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="streamUrlSelect" class="text-xs font-medium text-slate-400">Seleccionar Enlace de Audio:</label>
+                        <select id="streamUrlSelect" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-cyan-500 transition-colors">
+                            <option value="https://icecast.omnilink.com.br/stream/radio" selected>Servidor Principal (Icecast HQ)</option>
+                            <option value="https://radio.servidor-streaming.com/stream">Servidor Alternativo (Secure Stream)</option>
+                            <option value="https://stream.zeno.fm/f32q2v87z98uv">Servidor Zeno.fm Backup</option>
+                            <option value="custom">Ingresar URL Personalizada...</option>
+                        </select>
+                    </div>
+
+                    <!-- Volume Control -->
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex items-center justify-between">
+                            <label for="volumeSlider" class="text-xs font-medium text-slate-400 flex items-center gap-1.5">
+                                <i id="volumeIcon" class="fa-solid fa-volume-high text-cyan-400"></i> Volumen
+                            </label>
+                            <span id="volumeValue" class="text-xs text-cyan-400 font-mono">80%</span>
+                        </div>
+                        <div class="flex items-center gap-3 pt-1">
+                            <button id="muteBtn" class="text-slate-400 hover:text-cyan-400 transition-colors">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                            <input type="range" id="volumeSlider" min="0" max="100" value="80" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-400">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom URL input hidden by default -->
+                <div id="customUrlContainer" class="hidden flex gap-2 pt-2">
+                    <input type="url" id="customStreamUrl" placeholder="https://tu-servidor-de-radio.com/stream" class="flex-1 bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-cyan-500">
+                    <button id="applyCustomUrl" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-medium px-4 py-2 rounded-xl transition-colors">Aplicar</button>
+                </div>
+            </div>
+
+            <!-- Hidden HTML5 Audio Element -->
+            <audio id="radioAudio" preload="none" crossorigin="anonymous"></audio>
+
+        </div>
+    </main>
+
+    <footer class="relative z-10 w-full max-w-6xl mx-auto px-4 py-6 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-800/60">
+        <p>&copy; 2026 <span class="text-slate-400 font-medium">AGUA VIVA RADIO 102.7 FM</span>. Todos los derechos reservados.</p>
+        <div class="flex items-center gap-4">
+            <span class="flex items-center gap-1 text-slate-400"><i class="fa-solid fa-location-dot text-cyan-400"></i> Transmitiendo en Alta Definición</span>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const radioAudio = document.getElementById('radioAudio');
+        const streamToggleBtn = document.getElementById('streamToggleBtn');
+        const playIcon = document.getElementById('playIcon');
+        const liveIndicatorPing = document.getElementById('liveIndicatorPing');
+        const liveIndicatorDot = document.getElementById('liveIndicatorDot');
+        const liveStatusText = document.getElementById('liveStatusText');
+        const audioStatusMsg = document.getElementById('audioStatusMsg');
+        
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValue = document.getElementById('volumeValue');
+        const muteBtn = document.getElementById('muteBtn');
+        const volumeIcon = document.getElementById('volumeIcon');
+
+        const streamUrlSelect = document.getElementById('streamUrlSelect');
+        const customUrlContainer = document.getElementById('customUrlContainer');
+        const customStreamUrl = document.getElementById('customStreamUrl');
+        const applyCustomUrl = document.getElementById('applyCustomUrl');
+
+        const logoInput = document.getElementById('logoInput');
+        const stationLogo = document.getElementById('stationLogo');
+
+        const visualizer = document.getElementById('visualizer');
+
+        // State variables
+        let isPlaying = false;
+        let isMuted = false;
+        let previousVolume = 0.8;
+        let audioContext = null;
+        let analyser = null;
+        let dataArray = null;
+        let sourceNode = null;
+        let animationId = null;
+        const numBars = 24;
+
+        // Initialize visualizer bars
+        function initVisualizerBars() {
+            visualizer.innerHTML = '';
+            for (let i = 0; i < numBars; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'w-1.5 sm:w-2 bg-gradient-to-t from-cyan-600 to-cyan-400 rounded-full transition-all duration-75';
+                bar.style.height = '10%';
+                visualizer.appendChild(bar);
+            }
+        }
+        initVisualizerBars();
+
+        // Logo Upload Handler
+        logoInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    stationLogo.src = e.target.result;
+                    showNotification('Logo actualizado correctamente');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Notification Helper (replaces alert)
+        function showNotification(message) {
+            const existingNotif = document.getElementById('toastNotification');
+            if (existingNotif) existingNotif.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'toastNotification';
+            toast.className = 'fixed bottom-6 right-6 z-50 bg-slate-900 border border-cyan-500/50 text-slate-100 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-cyan-400 text-lg"></i><span class="text-sm font-medium">${message}</span>`;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        // Stream URL selection logic
+        streamUrlSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customUrlContainer.classList.remove('hidden');
+            } else {
+                customUrlContainer.classList.add('hidden');
+                if (isPlaying) {
+                    playStream();
+                }
+            }
+        });
+
+        applyCustomUrl.addEventListener('click', function() {
+            const customUrl = customStreamUrl.value.trim();
+            if (customUrl) {
+                if (isPlaying) {
+                    playStream();
+                }
+                showNotification('URL personalizada aplicada');
+            } else {
+                showNotification('Por favor ingrese una URL válida');
+            }
+        });
+
+        // Get active stream URL
+        function getActiveStreamUrl() {
+            if (streamUrlSelect.value === 'custom') {
+                return customStreamUrl.value.trim() || 'https://icecast.omnilink.com.br/stream/radio';
+            }
+            return streamUrlSelect.value;
+        }
+
+        // Toggle Play / Pause
+        streamToggleBtn.addEventListener('click', function() {
+            if (!isPlaying) {
+                playStream();
+            } else {
+                pauseStream();
+            }
+        });
+
+        function playStream() {
+            const url = getActiveStreamUrl();
+            radioAudio.src = url;
+            audioStatusMsg.textContent = 'Conectando al servidor...';
+            
+            radioAudio.play().then(() => {
+                isPlaying = true;
+                playIcon.className = 'fa-solid fa-pause text-2xl sm:text-3xl';
+                liveIndicatorPing.classList.add('bg-cyan-400');
+                liveIndicatorPing.classList.remove('bg-red-400');
+                liveIndicatorDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-cyan-500 shadow-lg shadow-cyan-500/50';
+                liveStatusText.textContent = 'En Vivo (102.7 FM)';
+                liveStatusText.className = 'text-xs font-semibold tracking-wider text-cyan-400 uppercase';
+                audioStatusMsg.textContent = 'Reproduciendo en directo';
+                
+                initAudioContext();
+                startVisualizerAnimation();
+            }).catch(error => {
+                console.error("Error reproduciendo audio:", error);
+                audioStatusMsg.textContent = 'Error de conexión / Stream inactivo';
+                showNotification('No se pudo conectar al stream de radio. Intente con otro servidor.');
+                pauseStream();
+            });
+        }
+
+        function pauseStream() {
+            radioAudio.pause();
+            radioAudio.src = '';
+            isPlaying = false;
+            playIcon.className = 'fa-solid fa-play text-2xl sm:text-3xl ml-1';
+            liveIndicatorPing.classList.remove('bg-cyan-400');
+            liveIndicatorPing.classList.add('bg-red-400');
+            liveIndicatorDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-red-500';
+            liveStatusText.textContent = 'En Vivo / Off-Air';
+            liveStatusText.className = 'text-xs font-semibold tracking-wider text-slate-300 uppercase';
+            audioStatusMsg.textContent = 'En pausa';
+            stopVisualizerAnimation();
+        }
+
+        // Volume slider handler
+        volumeSlider.addEventListener('input', function() {
+            const vol = this.value / 100;
+            radioAudio.volume = vol;
+            volumeValue.textContent = this.value + '%';
+            
+            if (vol == 0) {
+                isMuted = true;
+                volumeIcon.className = 'fa-solid fa-volume-xmark text-red-400';
+                muteBtn.innerHTML = '<i class="fa-solid fa-volume-xmark text-red-400"></i>';
+            } else {
+                isMuted = false;
+                volumeIcon.className = 'fa-solid fa-volume-high text-cyan-400';
+                muteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+            }
+        });
+
+        // Mute button handler
+        muteBtn.addEventListener('click', function() {
+            if (!isMuted) {
+                previousVolume = radioAudio.volume;
+                radioAudio.volume = 0;
+                volumeSlider.value = 0;
+                volumeValue.textContent = '0%';
+                isMuted = true;
+                volumeIcon.className = 'fa-solid fa-volume-xmark text-red-400';
+                muteBtn.innerHTML = '<i class="fa-solid fa-volume-xmark text-red-400"></i>';
+            } else {
+                radioAudio.volume = previousVolume;
+                const percent = Math.round(previousVolume * 100);
+                volumeSlider.value = percent;
+                volumeValue.textContent = percent + '%';
+                isMuted = false;
+                volumeIcon.className = 'fa-solid fa-volume-high text-cyan-400';
+                muteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+            }
+        });
+
+        // Audio Context for Visualizer
+        function initAudioContext() {
+            if (!audioContext) {
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioContext = new AudioContext();
+                    analyser = audioContext.createAnalyser();
+                    sourceNode = audioContext.createMediaElementSource(radioAudio);
+                    sourceNode.connect(analyser);
+                    analyser.connect(audioContext.destination);
+                    analyser.fftSize = 64;
+                    dataArray = new Uint8Array(analyser.frequencyBinCount);
+                } catch (e) {
+                    console.log("Web Audio API no soportada totalmente o CORS restringido:", e);
+                }
+            }
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        // Visualizer animation loop (handles real or simulated audio levels)
+        function startVisualizerAnimation() {
+            const bars = visualizer.children;
+            
+            function animateLoop() {
+                animationId = requestAnimationFrame(animateLoop);
+                
+                if (analyser && dataArray && isPlaying) {
+                    analyser.getByteFrequencyData(dataArray);
+                    for (let i = 0; i < bars.length; i++) {
+                        const value = dataArray[i % dataArray.length] || 10;
+                        const heightPercent = Math.max(10, (value / 255) * 100);
+                        bars[i].style.height = heightPercent + '%';
+                    }
+                } else if (isPlaying) {
+                    // Fallback simulated equalizer wave when CORS or analyzer context is restricted
+                    for (let i = 0; i < bars.length; i++) {
+                        const randomHeight = Math.floor(Math.random() * 75) + 15;
+                        bars[i].style.height = randomHeight + '%';
+                    }
+                }
+            }
+            animateLoop();
+        }
+
+        function stopVisualizerAnimation() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            const bars = visualizer.children;
+            for (let i = 0; i < bars.length; i++) {
+                bars[i].style.height = '10%';
+            }
+        }
+    </script>
+</body>
+</html>
+```
